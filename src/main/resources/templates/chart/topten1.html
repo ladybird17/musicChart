@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>문제1. 음원사이트를 참고하여 현재 인기가요 top10의 정보를 받아오는 프로그램을 작성하세요</title>
+<link rel="stylesheet" href="/css/bootstrap.css" th:href="@{/css/bootstrap.css}"></link>
+<script src="/js/jquery-3.5.1.js" th:src="@{/js/jquery-3.5.1.js}"></script>
+<script src="/js/popper.min.js" th:src="@{/js/popper.min.js}"></script>
+<script src="/js/bootstrap.js" th:src="@{/js/bootstrap.js}"></script>
+<!-- ajax방식 script -->
+<script>
+	$(document).ready(function(){
+		$("#btnLoad").on("click",function(){
+			$.ajax({
+				url:"/chart/topten2",
+				type:"POST",
+				//data: 는 따로 줄게 없으면 안적어줘도 됨
+				success: function(data){
+					for(var i =0; i<data.length; i++){
+						var result = "<tr>";
+						result += "<td>" + data[i].id + "</td>";
+						result += "<td>" + data[i].title + "</td>";
+						result += "<td>" + data[i].album + "</td>";
+						result += "<td>" + data[i].musician + "</td>";
+						result += "<td>" + data[i].release + "</td>";
+						result += "<td>" + data[i].genre + "</td>";
+						result += "</tr>";
+						
+						$("#chartTable tbody").append(result);
+						
+						console.log(data[i].id);
+						console.log(data[i].title);
+						console.log(data[i].album);
+						console.log(data[i].musician);
+						console.log(data[i].release);
+						console.log(data[i].genre);
+					}
+				},
+				error: function(){
+					alert("ajax 통신에 오류가 발생했습니다.");
+				}
+			});
+		});
+	});
+</script>
+</head>
+<body>
+	<header class="container">
+		<div class="jumbotron">
+			<h1>음원 인기차트 10</h1>
+		</div>
+	</header>
+	<main class="container">
+		<section>
+			<div class="mx-auto">
+				<article>
+					<h3>xml 데이터 파싱하기</h3>
+					<table class="table table-hover table-striped">
+						<colgroup>
+							<col width="10%">
+							<col width="20%">
+							<col width="20%">
+							<col width="20%">
+							<col width="20%">
+							<col width="10%">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>순위<th>
+								<th>곡 제목</th>
+								<th>앨범</th>
+								<th>가수</th>
+								<th>발매일</th>
+								<th>장르</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:if="${#lists.size(xmlDatas)} > 0" th:each="list : ${xmlDatas}">
+								<td th:text="${list.id}">순위</td>
+								<td th:text="${list.title}">곡 제목</td>
+								<td th:text="${list.album}">앨범</td>
+								<td th:text="${list.musician}">가수</td>
+								<td th:text="${list.release}">발매일</td>
+								<td th:text="${list.genre}">장르</td>
+							</tr>
+							<tr th:unless="${#lists.size(xmlDatas)} > 0">
+								<td colspan="6" th:text="'데이터가 없습니다."></td>
+							</tr>
+						</tbody>
+					</table>
+				</article>
+				<br><hr><br>
+				<article>
+					<h3>ajax를 통해서 데이터 가지고 오기</h3>
+					<table id="chartTable" class="table table-hover table-striped">
+						<thead>
+							<tr>
+								<th>순위<th>
+								<th>곡 제목</th>
+								<th>앨범</th>
+								<th>가수</th>
+								<th>발매일</th>
+								<th>장르</th>
+							</tr>
+						</thead>
+						<tbody>
+							
+						</tbody>
+						<button id="btnLoad" class="btn btn-primary btn-block">음원차트 가져오기</button>
+					</table>
+				</article>
+			</div>
+		</section>
+	</main>
+</body>
+</html>
